@@ -15,10 +15,11 @@ class CUDA_FrontendAction : public clang::ASTFrontendAction
 
         std::unique_ptr<clang::ASTConsumer> CreateASTConsumer(
                                                     clang::CompilerInstance &Compiler, 
-                                                    llvm::StringRef InFile) override{
-                                                                    return std::make_unique<CUDA_ASTConsumer>(&Compiler.getASTContext());
+                                                    llvm::StringRef InFile) override
+        {
+            return std::make_unique<CUDA_ASTConsumer>(&Compiler.getASTContext());
 
-                                                    }
+        }
                                                    
                                                    
 
