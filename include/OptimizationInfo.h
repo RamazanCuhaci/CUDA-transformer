@@ -2,6 +2,7 @@
 #define OPTIMIZATION_INFO_H
 
 #include "clang/AST/Expr.h"
+#include <vector>
 
 class OptimizationInfo 
 {

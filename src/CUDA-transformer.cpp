@@ -1,33 +1,38 @@
+
 #include "clang/Tooling/CommonOptionsParser.h"
 #include "clang/Tooling/Tooling.h"
 #include "llvm/Support/CommandLine.h"
 #include "clang/Frontend/CompilerInstance.h"
 #include "clang/Frontend/FrontendAction.h"
-#include "../include/CUDA_ASTConsumer.h"           
+#include "../include/CUDA_ASTConsumer.h"
 
 
 // Declare tool options
 static llvm::cl::OptionCategory MyToolCategory("my-tool options");
 llvm::cl::list<int> DoubleIndexes("double-indexes", llvm::cl::desc("Specify the indices of the double variable occurrences to modify"), llvm::cl::value_desc("index"));
 
-
 class CUDA_FrontendAction : public clang::ASTFrontendAction 
 {
-    clang::Rewriter transformWriter;
-    OptimizationInfo optimizations;
-    // The common entry point for the tool
-    public:
 
-        std::unique_ptr<clang::ASTConsumer> CreateASTConsumer(
-                                                    clang::CompilerInstance &Compiler, 
-                                                    llvm::StringRef InFile) override
-        {
-            
-            transformWriter.setSourceMgr(Compiler.getSourceManager(),Compiler.getLangOpts());
-            return std::make_unique<CUDA_ASTConsumer>(&Compiler.getASTContext(),transformWriter,
-            optimizations);
-        }
-                                                                                              
+    clang::Rewriter TheRewriter;
+    OptimizationInfo Info;
+// The common entry point for the tool
+public:
+
+    std::unique_ptr<clang::ASTConsumer> CreateASTConsumer(
+        clang::CompilerInstance &Compiler, 
+        llvm::StringRef InFile) override
+    {
+        TheRewriter.setSourceMgr(Compiler.getSourceManager(), Compiler.getLangOpts());
+        return std::make_unique<CUDA_ASTConsumer>(&Compiler.getASTContext(),TheRewriter,Info);
+    }
+
+    void EndSourceFileAction() override {
+        // Output the modified source
+        TheRewriter.getEditBuffer(TheRewriter.getSourceMgr().getMainFileID()).write(llvm::outs());
+    }
+                                                                                       
+
 }; 
 
 int main(int argc, const char **argv)
@@ -60,7 +65,6 @@ int main(int argc, const char **argv)
     return 0;
 
 };
-
 
 
 
