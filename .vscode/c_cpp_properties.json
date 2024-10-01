@@ -1,0 +1,20 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/home/ramcho/clang-llvm/llvm-project/llvm/include",
+                "/home/ramcho/clang-llvm/llvm-project/build/include",
+                "/home/ramcho/clang-llvm/llvm-project/clang/include",
+                "/home/ramcho/clang-llvm/llvm-project/clang/include/clang"
+            ],
+            "defines": [],
+            "compilerPath": "/home/ramcho/clang-llvm/llvm-project/build/bin/clang",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "linux-clang-x64"
+        }
+    ],
+    "version": 4
+}
