@@ -1,0 +1,11 @@
+#include "../../include/Commands/ReplaceSyncWithWarpCommand.h"
+
+ReplaceSyncWithWarpCommand::ReplaceSyncWithWarpCommand(clang::Rewriter &rewriter, clang::CallExpr *syncCall)
+    : rewriter(rewriter), syncCall(syncCall)
+{
+}
+
+void ReplaceSyncWithWarpCommand::execute()
+{
+    rewriter.ReplaceText(syncCall->getSourceRange(), "__syncwarp()");
+}
