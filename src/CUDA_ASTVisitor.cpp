@@ -11,3 +11,16 @@ bool CUDA_ASTVisitor::VisitCUDAKernelCallExpr(clang::CUDAKernelCallExpr *kernelC
     return true;
 }
 
+bool CUDA_ASTVisitor::VisitCallExpr(clang::CallExpr *callExpr)
+{
+
+    if (const clang::FunctionDecl *callee = callExpr->getDirectCallee())
+    {
+        if (callee->getNameInfo().getAsString() == "__syncthreads")
+        {
+            targetExpressions->syncthreadCalls.push_back(callExpr);
+        }
+    }
+
+    return true;
+}

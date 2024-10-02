@@ -16,6 +16,8 @@ class CUDA_ASTVisitor : public clang::RecursiveASTVisitor<CUDA_ASTVisitor>
     explicit CUDA_ASTVisitor(clang::ASTContext *context, clang::Rewriter &writer, Expressions *targetExpressions);
 
     bool VisitCUDAKernelCallExpr(clang::CUDAKernelCallExpr *kernelCallEexpr);
+    bool VisitCallExpr(clang::CallExpr *callExpr);
+
     Expressions *targetExpressions;
 };
 
