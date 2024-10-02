@@ -14,7 +14,7 @@ class CUDA_ASTConsumer : public clang::ASTConsumer
     public:
         explicit CUDA_ASTConsumer(clang::ASTContext *context,
         clang::Rewriter &writer, 
-        const Expressions *targetExpressions);
+        Expressions *targetExpressions);
 
         virtual void HandleTranslationUnit(clang::ASTContext &Context) override;
 

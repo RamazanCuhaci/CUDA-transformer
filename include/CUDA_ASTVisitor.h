@@ -1,31 +1,22 @@
 #ifndef CUDA_AST_VISITOR_H
 #define CUDA_AST_VISITOR_H
 
-#include "clang/AST/RecursiveASTVisitor.h"
-#include "clang/Rewrite/Core/Rewriter.h"
-#include "clang/Basic/SourceManager.h"
 #include "Expressions.h"
+#include "clang/AST/RecursiveASTVisitor.h"
+#include "clang/Basic/SourceManager.h"
+#include "clang/Rewrite/Core/Rewriter.h"
 
 class CUDA_ASTVisitor : public clang::RecursiveASTVisitor<CUDA_ASTVisitor>
 {
 
     clang::ASTContext *context;
     clang::Rewriter &writer;
-    const Expressions *targetExpressions;
 
-public:
+  public:
+    explicit CUDA_ASTVisitor(clang::ASTContext *context, clang::Rewriter &writer, Expressions *targetExpressions);
 
-    explicit CUDA_ASTVisitor(
-        clang::ASTContext *context, 
-        clang::Rewriter &writer,
-        const Expressions *targetExpressions);
-
-    bool VisitCUDAKernelCallExpr(clang::CUDAKernelCallExpr *kernelCall);   
-    const Expressions getExpressions();
-
-        
-
+    bool VisitCUDAKernelCallExpr(clang::CUDAKernelCallExpr *kernelCallEexpr);
+    Expressions *targetExpressions;
 };
-
 
 #endif

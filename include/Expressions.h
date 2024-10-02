@@ -2,6 +2,7 @@
 #define EXPRESSIONS_H
 
 #include "clang/AST/Expr.h"
+#include "clang/AST/ExprCXX.h"
 #include <vector>
 
 class Expressions 
