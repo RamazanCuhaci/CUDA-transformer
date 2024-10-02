@@ -4,8 +4,8 @@
 CUDA_ASTVisitor::CUDA_ASTVisitor(
     clang::ASTContext *context, 
     clang::Rewriter &writer,
-    OptimizationInfo &info) 
-    : context(context), writer(writer), info(info) 
+    const Expressions *targetExpressions) 
+    : context(context), writer(writer), targetExpressions(targetExpressions) 
     {}
 
 
@@ -21,10 +21,16 @@ bool CUDA_ASTVisitor::VisitCUDAKernelCallExpr(clang::CUDAKernelCallExpr *kernelC
         {
             const clang::Expr *arg = config->getArg(i);
     
-            arg->printPretty(llvm::outs(), nullptr, clang::PrintingPolicy(context->getLangOpts()));
+            arg->printPretty(
+                llvm::outs(), 
+                nullptr, 
+                clang::PrintingPolicy(context->getLangOpts()));
             llvm::outs() << "\n";
         }
     }
+
+    // targetExpressions->kernelCalls.push_back(kernelCall);
+
     return true;
 
 }

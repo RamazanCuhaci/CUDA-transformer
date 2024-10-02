@@ -4,23 +4,26 @@
 #include "clang/AST/RecursiveASTVisitor.h"
 #include "clang/Rewrite/Core/Rewriter.h"
 #include "clang/Basic/SourceManager.h"
-#include "OptimizationInfo.h"
+#include "Expressions.h"
 
 class CUDA_ASTVisitor : public clang::RecursiveASTVisitor<CUDA_ASTVisitor>
 {
 
     clang::ASTContext *context;
     clang::Rewriter &writer;
-    OptimizationInfo &info;
+    const Expressions *targetExpressions;
 
-    public:
-    
-        explicit CUDA_ASTVisitor(
-            clang::ASTContext *context, 
-            clang::Rewriter &writer,
-            OptimizationInfo &info);
+public:
 
-        bool VisitCUDAKernelCallExpr(clang::CUDAKernelCallExpr *kernelCall);   
+    explicit CUDA_ASTVisitor(
+        clang::ASTContext *context, 
+        clang::Rewriter &writer,
+        const Expressions *targetExpressions);
+
+    bool VisitCUDAKernelCallExpr(clang::CUDAKernelCallExpr *kernelCall);   
+    const Expressions getExpressions();
+
+        
 
 };
 

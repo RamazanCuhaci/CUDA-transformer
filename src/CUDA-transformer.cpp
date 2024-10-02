@@ -15,7 +15,7 @@ class CUDA_FrontendAction : public clang::ASTFrontendAction
 {
 
     clang::Rewriter TheRewriter;
-    OptimizationInfo Info;
+    const Expressions targetExpressions;
 // The common entry point for the tool
 public:
 
@@ -24,7 +24,7 @@ public:
         llvm::StringRef InFile) override
     {
         TheRewriter.setSourceMgr(Compiler.getSourceManager(), Compiler.getLangOpts());
-        return std::make_unique<CUDA_ASTConsumer>(&Compiler.getASTContext(),TheRewriter,Info);
+        return std::make_unique<CUDA_ASTConsumer>(&Compiler.getASTContext(),TheRewriter, &targetExpressions);
     }
 
     void EndSourceFileAction() override {
