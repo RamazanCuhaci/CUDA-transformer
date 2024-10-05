@@ -9,6 +9,7 @@
 #include "Commands/ReplaceSyncWithWarp.h"
 #include "Commands/ReplaceAtomicWithBlock.h"
 #include "Commands/ReplaceAtomicWithDirect.h"
+#include "Commands/ReplaceSyncThreadWithTile.h"
 #include "Commands/TransformCommand.h"
 
 class Transformer
@@ -27,7 +28,7 @@ class Transformer
     
     /* Analyze and ask user to choice for optimization
     */
-    void analyzeSyncthread(clang::CallExpr *callExpr, clang::Rewriter &writer);
+    void analyzeSyncthread(clang::CallExpr *callExpr, clang::Rewriter &writer, clang::ASTContext &context);
     void analyzeAtomicCalls(clang::CallExpr *callExpr, clang::Rewriter &writer, clang::ASTContext &context);
 
 };

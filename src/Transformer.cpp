@@ -19,18 +19,19 @@ void Transformer::executeCommands()
     }
 }
 
-void Transformer::analyzeSyncthread(clang::CallExpr *callExpr, clang::Rewriter &rewriter)
+void Transformer::analyzeSyncthread(clang::CallExpr *callExpr, clang::Rewriter &rewriter, clang::ASTContext &context)
 {
 
     int choice{-1};
 
     // If there is no valid choice ask again
-    while (choice != 0 && choice != 1 && choice != 2)
+    while (choice != 0 && choice != 1 && choice != 2 && choice != 3)
     {
         llvm::outs() << "Optimization options for __syncthreads:\n"
                      << "0. Do nothing\n"
                      << "1. Replace with __syncwarp()\n"
                      << "2. Remove __syncthreads\n"
+                     << "3. Synchronize only 4 threads in the group\n"
                      << "Enter choice: ";
 
         std::cin >> choice;
@@ -46,6 +47,10 @@ void Transformer::analyzeSyncthread(clang::CallExpr *callExpr, clang::Rewriter &
         else if (choice == 2)
         {
             addCommand(std::make_unique<RemoveSyncThread>(rewriter, callExpr));
+        }
+        else if (choice == 3)
+        {
+            addCommand(std::make_unique<ReplaceSyncThreadWithTile>(rewriter, callExpr, context));   
         }
         else
         {
