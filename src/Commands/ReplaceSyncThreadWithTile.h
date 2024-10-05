@@ -1,4 +1,3 @@
-// ReplaceSyncWithWarpCommand.h
 #ifndef REPLACE_SYNC_WITH_TILE_H
 #define REPLACE_SYNC_WITH_TILE_H
 
