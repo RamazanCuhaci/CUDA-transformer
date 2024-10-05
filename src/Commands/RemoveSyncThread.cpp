@@ -8,5 +8,6 @@ RemoveSyncThread::RemoveSyncThread(clang::Rewriter &rewriter, clang::CallExpr *s
 void RemoveSyncThread::execute()
 {
     // Add comment the moving area
-    rewriter.ReplaceText(syncCall->getSourceRange(), "// SYNCTHREADCALL REMOVED");
+    rewriter.ReplaceText(syncCall->getSourceRange(),
+                         "\n\t//////// CUDA-TRANSFORMER WAS HERE : __syncthreads() function removed ");
 }

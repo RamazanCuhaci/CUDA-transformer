@@ -26,13 +26,9 @@ void ReplaceAtomicWithBlock::execute()
     }
     newText += ")";
 
-    // Capture the end location of the atomic call's statement
-    clang::SourceLocation endLocation = atomicCall->getEndLoc().getLocWithOffset(1);
-
-    // Replace the entire expression with the new function call
-    clang::SourceRange range = atomicCall->getSourceRange();
-    rewriter.ReplaceText(range, newText);
+    rewriter.ReplaceText(atomicCall->getSourceRange(), newText);
 
     // Add a comment after the full statement, after the semicolon
-    rewriter.InsertTextAfterToken(endLocation, " // Changed to atomic block function");
+    rewriter.InsertTextAfterToken(atomicCall->getEndLoc().getLocWithOffset(1),
+                                  "\t//////// CUDA-TRANSFORMER WAS HERE : atomic call replaced with atomic_block");
 }
