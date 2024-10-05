@@ -101,5 +101,5 @@ void ReplaceAtomicWithDirect::execute()
 
     // Add a comment after the full statement, after the semicolon
     rewriter.InsertTextAfterToken(atomicCall->getEndLoc().getLocWithOffset(1),
-                                  "\t//////// CUDA-TRANSFORMER WAS HERE : atomic call replaced with ownd direct operation");
+                                  "\t//////// CUDA-TRANSFORMER WAS HERE : atomic call replaced with own direct operation");
 }
