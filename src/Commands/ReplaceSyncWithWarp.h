@@ -1,6 +1,6 @@
 // ReplaceSyncWithWarpCommand.h
 #ifndef REPLACE_SYNC_WITH_WARP_H
-#define REPLACE_SYNC_WITH_WArP_H
+#define REPLACE_SYNC_WITH_WARP_H
 
 #include "TransformCommand.h"
 

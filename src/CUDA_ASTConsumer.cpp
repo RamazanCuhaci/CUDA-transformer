@@ -15,7 +15,7 @@ void CUDA_ASTConsumer::HandleTranslationUnit(clang::ASTContext &context)
     // Ask user for decisions after traversal
     for (clang::CallExpr *syncCall : targetExpressions.syncthreadCalls)
     {
-        transformer.analyzeSyncthread(syncCall, writer); // Ask for __syncthreads optimizations
+        transformer.analyzeSyncthread(syncCall, writer, context); // Ask for __syncthreads optimizations
     }
 
     for (clang::CallExpr *atomicCall : targetExpressions.atomicCalls)
