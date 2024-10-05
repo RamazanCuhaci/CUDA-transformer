@@ -10,12 +10,12 @@
 #include "Commands/ReplaceAtomicWithBlock.h"
 #include "Commands/ReplaceAtomicWithDirect.h"
 #include "Commands/ReplaceSyncThreadWithTile.h"
+#include "Commands/ReplaceSyncThreadWithActive.h"
 #include "Commands/TransformCommand.h"
 
 class Transformer
 {
 
-    
     std::vector<std::unique_ptr<TransformCommand>> commands; // List of commands to execute
 
     void displayWrongChoiceError();

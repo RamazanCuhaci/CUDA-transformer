@@ -3,6 +3,13 @@ set(LLVM_LINK_COMPONENTS support)
         src/CUDA-transformer.cpp
         src/CUDA_ASTVisitor.cpp
         src/CUDA_ASTConsumer.cpp
+        src/Commands/RemoveSyncThread.cpp
+        src/Commands/ReplaceSyncWithWarp.cpp
+        src/Commands/ReplaceAtomicWithBlock.cpp
+        src/Commands/ReplaceAtomicWithDirect.cpp
+        src/Commands/ReplaceSyncThreadWithTile.cpp
+        src/Commands/ReplaceSyncThreadWithActive.cpp
+        src/Transformer.cpp
     )
     target_link_libraries(CUDA-transformer
         PRIVATE
