@@ -25,13 +25,34 @@ class CUDA_FrontendAction : public clang::ASTFrontendAction
                                                           llvm::StringRef InFile) override
     {
         TheRewriter.setSourceMgr(Compiler.getSourceManager(), Compiler.getLangOpts());
-        return std::make_unique<CUDA_ASTConsumer>(&Compiler.getASTContext(), TheRewriter, targetExpressions, transformer);
+        return std::make_unique<CUDA_ASTConsumer>(&Compiler.getASTContext(), TheRewriter, targetExpressions,
+                                                  transformer);
     }
 
     void EndSourceFileAction() override
     {
-        // Output the modified source
-        TheRewriter.getEditBuffer(TheRewriter.getSourceMgr().getMainFileID()).write(llvm::outs());
+      // Get the source manager
+        clang::SourceManager &SM = TheRewriter.getSourceMgr();
+        clang::FileID mainFileID = SM.getMainFileID();
+        
+        // Create the new filename with "new_" prefix
+        std::string newFileName = "new_cuda.cu";
+
+        // Open a file stream for the new file
+        std::error_code EC;
+        llvm::raw_fd_ostream outFile(newFileName, EC, llvm::sys::fs::OF_None);
+
+        // Check for file opening errors
+        if (EC) {
+            llvm::errs() << "Error opening file " << newFileName << ": " << EC.message() << "\n";
+            return;
+        }
+
+        // Write the modified source code to the new file
+        TheRewriter.getEditBuffer(mainFileID).write(outFile);
+
+        // Close the file stream
+        outFile.close();
     }
 };
 
@@ -50,6 +71,7 @@ int main(int argc, const char **argv)
     // Get command line options
     clang::tooling::CommonOptionsParser &op = ExpectedParser.get(); // Use the fully qualified name
     clang::tooling::ClangTool Tool(op.getCompilations(), op.getSourcePathList());
+
 
     // Create factory for front end actions and run
     // Front end action class has ASTConsumer and ASTConsumer has ASTVisitor
