@@ -5,28 +5,45 @@ CUDA_ASTVisitor::CUDA_ASTVisitor(clang::ASTContext *context, clang::Rewriter &wr
 {
 }
 
-bool CUDA_ASTVisitor::VisitCUDAKernelCallExpr(clang::CUDAKernelCallExpr *kernelCall)
+bool CUDA_ASTVisitor::VisitFunctionDecl(clang::FunctionDecl *funcDecl)
 {
-    targetExpressions.kernelCalls.push_back(kernelCall);
+    if (funcDecl->hasAttr<clang::CUDAGlobalAttr>())
+    {
+        isVisitorInsideKernel = true;
+    }
+    else
+    {
+        isVisitorInsideKernel = false;
+    }
+
     return true;
 }
 
+bool CUDA_ASTVisitor::VisitCUDAKernelCallExpr(clang::CUDAKernelCallExpr *kernelCall)
+{
+    targetExpressions.kernelCalls.push_back(kernelCall);
+
+    return true;
+}
 
 bool CUDA_ASTVisitor::VisitCallExpr(clang::CallExpr *callExpr)
 {
-
-    // Check for null pointer
-    if (const clang::FunctionDecl *callee = callExpr->getDirectCallee())
+    // Change expressions that only inside the kernel function
+    if (isVisitorInsideKernel)
     {
-        if (callee->getNameAsString() == "__syncthreads")
+        // Check for null pointer
+        if (const clang::FunctionDecl *callee = callExpr->getDirectCallee())
         {
-            targetExpressions.syncthreadCalls.push_back(callExpr);
-        }
-        else if (callee->getNameAsString().substr(0,6) == "atomic")
-        {
-            targetExpressions.atomicCalls.push_back(callExpr);
+            if (callee->getNameAsString() == "__syncthreads")
+            {
+                targetExpressions.syncthreadCalls.push_back(callExpr);
+            }
+            else if (callee->getNameAsString().substr(0, 6) == "atomic")
+            {
+                targetExpressions.atomicCalls.push_back(callExpr);
+            }
         }
     }
- 
+
     return true;
 }
