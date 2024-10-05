@@ -1,5 +1,5 @@
 
-#include "../include/CUDA_ASTConsumer.h"
+#include "CUDA_ASTConsumer.h"
 #include "clang/Frontend/CompilerInstance.h"
 #include "clang/Frontend/FrontendAction.h"
 #include "clang/Tooling/CommonOptionsParser.h"
@@ -17,13 +17,15 @@ class CUDA_FrontendAction : public clang::ASTFrontendAction
 
     clang::Rewriter TheRewriter;
     Expressions targetExpressions;
+    Transformer transformer;
+
     // The common entry point for the tool
   public:
     std::unique_ptr<clang::ASTConsumer> CreateASTConsumer(clang::CompilerInstance &Compiler,
                                                           llvm::StringRef InFile) override
     {
         TheRewriter.setSourceMgr(Compiler.getSourceManager(), Compiler.getLangOpts());
-        return std::make_unique<CUDA_ASTConsumer>(&Compiler.getASTContext(), TheRewriter, &targetExpressions);
+        return std::make_unique<CUDA_ASTConsumer>(&Compiler.getASTContext(), TheRewriter, targetExpressions, transformer);
     }
 
     void EndSourceFileAction() override

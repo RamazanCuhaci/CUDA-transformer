@@ -1,26 +1,32 @@
-#include "../include/CUDA_ASTVisitor.h"
+#include "CUDA_ASTVisitor.h"
 
-CUDA_ASTVisitor::CUDA_ASTVisitor(clang::ASTContext *context, clang::Rewriter &writer, Expressions *targetExpressions)
+CUDA_ASTVisitor::CUDA_ASTVisitor(clang::ASTContext *context, clang::Rewriter &writer, Expressions &targetExpressions)
     : context(context), writer(writer), targetExpressions(targetExpressions)
 {
 }
 
 bool CUDA_ASTVisitor::VisitCUDAKernelCallExpr(clang::CUDAKernelCallExpr *kernelCall)
 {
-    targetExpressions->kernelCalls.push_back(kernelCall);
+    targetExpressions.kernelCalls.push_back(kernelCall);
     return true;
 }
+
 
 bool CUDA_ASTVisitor::VisitCallExpr(clang::CallExpr *callExpr)
 {
 
+    // Check for null pointer
     if (const clang::FunctionDecl *callee = callExpr->getDirectCallee())
     {
-        if (callee->getNameInfo().getAsString() == "__syncthreads")
+        if (callee->getNameAsString() == "__syncthreads")
         {
-            targetExpressions->syncthreadCalls.push_back(callExpr);
+            targetExpressions.syncthreadCalls.push_back(callExpr);
+        }
+        else if (callee->getNameAsString().substr(0,6) == "atomic")
+        {
+            targetExpressions.atomicCalls.push_back(callExpr);
         }
     }
-
+ 
     return true;
 }
