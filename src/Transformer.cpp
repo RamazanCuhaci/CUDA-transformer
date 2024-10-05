@@ -80,7 +80,7 @@ void Transformer::analyzeAtomicCalls(clang::CallExpr *callExpr, clang::Rewriter 
         }
         else if (choice == 2)
         {
-            // addCommand(std::make_unique<ReplaceWithBlock>(rewriter, callExpr));
+            addCommand(std::make_unique<ReplaceAtomicWithDirect>(rewriter, callExpr, context));
         }
         else
         {

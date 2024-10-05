@@ -31,10 +31,10 @@ class CUDA_FrontendAction : public clang::ASTFrontendAction
 
     void EndSourceFileAction() override
     {
-      // Get the source manager
+        // Get the source manager
         clang::SourceManager &SM = TheRewriter.getSourceMgr();
         clang::FileID mainFileID = SM.getMainFileID();
-        
+
         // Create the new filename with "new_" prefix
         std::string newFileName = "new_cuda.cu";
 
@@ -43,7 +43,8 @@ class CUDA_FrontendAction : public clang::ASTFrontendAction
         llvm::raw_fd_ostream outFile(newFileName, EC, llvm::sys::fs::OF_None);
 
         // Check for file opening errors
-        if (EC) {
+        if (EC)
+        {
             llvm::errs() << "Error opening file " << newFileName << ": " << EC.message() << "\n";
             return;
         }
@@ -71,7 +72,6 @@ int main(int argc, const char **argv)
     // Get command line options
     clang::tooling::CommonOptionsParser &op = ExpectedParser.get(); // Use the fully qualified name
     clang::tooling::ClangTool Tool(op.getCompilations(), op.getSourcePathList());
-
 
     // Create factory for front end actions and run
     // Front end action class has ASTConsumer and ASTConsumer has ASTVisitor

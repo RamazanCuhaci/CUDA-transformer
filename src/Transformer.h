@@ -8,6 +8,7 @@
 #include "Commands/RemoveSyncThread.h"
 #include "Commands/ReplaceSyncWithWarp.h"
 #include "Commands/ReplaceAtomicWithBlock.h"
+#include "Commands/ReplaceAtomicWithDirect.h"
 #include "Commands/TransformCommand.h"
 
 class Transformer
