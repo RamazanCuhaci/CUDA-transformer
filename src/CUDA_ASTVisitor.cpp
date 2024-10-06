@@ -1,7 +1,7 @@
 #include "CUDA_ASTVisitor.h"
 
 CUDA_ASTVisitor::CUDA_ASTVisitor(clang::ASTContext *context, clang::Rewriter &writer, Expressions &targetExpressions)
-    : context(context), writer(writer), targetExpressions(targetExpressions)
+    : context(context), writer(writer), targetExpressions(targetExpressions), isVisitorInsideKernel(false)
 {
 }
 

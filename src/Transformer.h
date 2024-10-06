@@ -11,6 +11,7 @@
 #include "Commands/ReplaceAtomicWithDirect.h"
 #include "Commands/ReplaceSyncThreadWithTile.h"
 #include "Commands/ReplaceSyncThreadWithActive.h"
+#include "Commands/KernelCallReduction.h"
 #include "Commands/TransformCommand.h"
 
 class Transformer
@@ -30,6 +31,7 @@ class Transformer
     */
     void analyzeSyncthread(clang::CallExpr *callExpr, clang::Rewriter &writer, clang::ASTContext &context);
     void analyzeAtomicCalls(clang::CallExpr *callExpr, clang::Rewriter &writer, clang::ASTContext &context);
+    void analyzeKernelCall(clang::CUDAKernelCallExpr *callExpr, clang::Rewriter &writer, clang::ASTContext &context);
 
 };
 

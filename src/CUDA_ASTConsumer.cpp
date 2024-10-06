@@ -23,11 +23,11 @@ void CUDA_ASTConsumer::HandleTranslationUnit(clang::ASTContext &context)
         transformer.analyzeAtomicCalls(atomicCall, writer, context); // Ask for atomic optimizations
     }
 
-    // // Add loops for other types of expressions as needed
-    // for (clang::CUDAKernelCallExpr *kernelCall : targetExpressions.kernelCalls)
-    // {
-    //     transformer.askUserForOptimization(kernelCall, writer, "kernel"); // Ask for kernel call optimizations
-    // }
+    // Add loops for other types of expressions as needed
+    for (clang::CUDAKernelCallExpr *kernelCall : targetExpressions.kernelCalls)
+    {
+        transformer.analyzeKernelCall(kernelCall, writer, context); // Ask for kernel call optimizations
+    }
 
     transformer.executeCommands();
 }

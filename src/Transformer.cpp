@@ -98,3 +98,38 @@ void Transformer::analyzeAtomicCalls(clang::CallExpr *callExpr, clang::Rewriter 
         }
     }
 }
+
+void Transformer::analyzeKernelCall(clang::CUDAKernelCallExpr *callExpr, clang::Rewriter &rewriter, clang::ASTContext &context)
+{
+
+    int choice{-1};
+
+    // If there is no valid choice ask again
+    while (choice != 0 && choice != 1 && choice != 2)
+    {
+
+        llvm::outs() << "Optimization options for kernel call:\n"
+                     << "0. Do nothing\n"
+                     << "1. Block reduction (type '1 deductionRate')"
+                     << "Enter choice: ";
+
+        int blockReductionRate{};
+        int threadReductionRate{};             
+        std::cin >> choice >> blockReductionRate >> threadReductionRate;
+
+        if (choice == 0)
+        {
+            return;
+        }
+        else if (choice == 1)
+        {
+            addCommand(std::make_unique<KernelCallReduction>(rewriter, callExpr, context, blockReductionRate, threadReductionRate));
+        }
+        else
+        {
+            displayWrongChoiceError();
+        }
+    }
+
+
+}

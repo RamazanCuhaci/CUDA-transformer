@@ -8,9 +8,6 @@
 
 // Declare tool options
 static llvm::cl::OptionCategory MyToolCategory("my-tool options");
-llvm::cl::list<int> DoubleIndexes("double-indexes",
-                                  llvm::cl::desc("Specify the indices of the double variable occurrences to modify"),
-                                  llvm::cl::value_desc("index"));
 
 class CUDA_FrontendAction : public clang::ASTFrontendAction
 {
