@@ -29,5 +29,11 @@ void CUDA_ASTConsumer::HandleTranslationUnit(clang::ASTContext &context)
         transformer.analyzeKernelCall(kernelCall, writer, context); // Ask for kernel call optimizations
     }
 
+    for (std::vector<clang::Stmt *> ifElseBody : targetExpressions.ifElseBodies)
+    {
+    
+        transformer.analyzeIfElse(ifElseBody, writer, context); // Ask for if-else optimizations
+    }
+
     transformer.executeCommands();
 }

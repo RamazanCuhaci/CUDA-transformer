@@ -25,7 +25,7 @@ void Transformer::analyzeSyncthread(clang::CallExpr *callExpr, clang::Rewriter &
     int choice{-1};
 
     // If there is no valid choice ask again
-    while (choice != 0 && choice != 1 && choice != 2 && choice != 3 && choice !=4)
+    while (choice != 0 && choice != 1 && choice != 2 && choice != 3 && choice != 4)
     {
         llvm::outs() << "Optimization options for __syncthreads:\n"
                      << "0. Do nothing\n"
@@ -51,11 +51,11 @@ void Transformer::analyzeSyncthread(clang::CallExpr *callExpr, clang::Rewriter &
         }
         else if (choice == 3)
         {
-            addCommand(std::make_unique<ReplaceSyncThreadWithTile>(rewriter, callExpr, context));   
+            addCommand(std::make_unique<ReplaceSyncThreadWithTile>(rewriter, callExpr, context));
         }
         else if (choice == 4)
         {
-            addCommand(std::make_unique<ReplaceSyncThreadWithActive>(rewriter, callExpr, context));   
+            addCommand(std::make_unique<ReplaceSyncThreadWithActive>(rewriter, callExpr, context));
         }
         else
         {
@@ -99,7 +99,8 @@ void Transformer::analyzeAtomicCalls(clang::CallExpr *callExpr, clang::Rewriter 
     }
 }
 
-void Transformer::analyzeKernelCall(clang::CUDAKernelCallExpr *callExpr, clang::Rewriter &rewriter, clang::ASTContext &context)
+void Transformer::analyzeKernelCall(clang::CUDAKernelCallExpr *callExpr, clang::Rewriter &rewriter,
+                                    clang::ASTContext &context)
 {
 
     int choice{-1};
@@ -114,7 +115,7 @@ void Transformer::analyzeKernelCall(clang::CUDAKernelCallExpr *callExpr, clang::
                      << "Enter choice: ";
 
         int blockReductionRate{};
-        int threadReductionRate{};             
+        int threadReductionRate{};
         std::cin >> choice >> blockReductionRate >> threadReductionRate;
 
         if (choice == 0)
@@ -123,13 +124,51 @@ void Transformer::analyzeKernelCall(clang::CUDAKernelCallExpr *callExpr, clang::
         }
         else if (choice == 1)
         {
-            addCommand(std::make_unique<KernelCallReduction>(rewriter, callExpr, context, blockReductionRate, threadReductionRate));
+            addCommand(std::make_unique<KernelCallReduction>(rewriter, callExpr, context, blockReductionRate,
+                                                             threadReductionRate));
         }
         else
         {
             displayWrongChoiceError();
         }
     }
+}
 
+void Transformer::analyzeIfElse(std::vector<clang::Stmt *> ifElseBody, clang::Rewriter &writer,
+                                clang::ASTContext &context)
+{
 
+    int choice{-1};
+
+    // If there is no valid choice ask again
+    while (choice != 0 && choice != 1 && choice != 2)
+    {
+
+        llvm::outs() << "If else branches found. Branch count: " << ifElseBody.size() << "\n"
+                     << "Optimization options for if-else statement:\n"
+                     << "0. Do nothing\n"
+                     << "1. Delete all\n"
+                     << "2. Replace with choosen branch (type '2 branchNumber')"
+                     << "Enter choice: ";
+        std::cin >> choice;
+
+        if (choice == 0)
+        {
+            return;
+        }
+        else if (choice == 1)
+        {
+            addCommand(std::make_unique<RemoveIfElseBranches>(writer, ifElseBody));
+        }
+        // else if (choice == 2)
+        // {
+        //     int branchNumber{};
+        //     std::cin >> branchNumber;
+        //     addCommand(std::make_unique<ReplaceIfElseBranch>(writer, ifElseBody, branchNumber));
+        // }
+        else
+        {
+            displayWrongChoiceError();
+        }
+    }
 }
