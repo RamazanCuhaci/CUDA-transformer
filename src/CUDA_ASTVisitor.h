@@ -10,7 +10,6 @@
 #include "clang/Rewrite/Core/Rewriter.h"
 #include <unordered_set>
 
-
 class CUDA_ASTVisitor : public clang::RecursiveASTVisitor<CUDA_ASTVisitor>
 {
 
@@ -23,9 +22,8 @@ class CUDA_ASTVisitor : public clang::RecursiveASTVisitor<CUDA_ASTVisitor>
     bool isVisitorInsideKernel;
     bool isNextIfNested; // Flag to indicate whether the next if statement is nested
 
-
     bool checkNestedIf(clang::Stmt *stmt);
-    std::vector<clang::Stmt*> bodies;// Store the bodies of if-else statements
+    std::vector<clang::Stmt *> bodies; // Store the bodies of if-else statements
 
   public:
     explicit CUDA_ASTVisitor(clang::ASTContext *context, clang::Rewriter &writer, Expressions &targetExpressions);

@@ -32,7 +32,7 @@ void CUDA_ASTConsumer::HandleTranslationUnit(clang::ASTContext &context)
     for (std::vector<clang::Stmt *> ifElseBody : targetExpressions.ifElseBodies)
     {
     
-        transformer.analyzeIfElse(ifElseBody, writer, context); // Ask for if-else optimizations
+        transformer.analyzeIfElse(ifElseBody, writer, context, targetExpressions.ifElseSourceRange); // Ask for if-else optimizations
     }
 
     transformer.executeCommands();

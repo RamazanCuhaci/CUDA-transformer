@@ -134,8 +134,8 @@ void Transformer::analyzeKernelCall(clang::CUDAKernelCallExpr *callExpr, clang::
     }
 }
 
-void Transformer::analyzeIfElse(std::vector<clang::Stmt *> ifElseBody, clang::Rewriter &writer,
-                                clang::ASTContext &context)
+void Transformer::analyzeIfElse(std::vector<clang::Stmt *> &ifElseBody, clang::Rewriter &writer,
+                                clang::ASTContext &context, std::queue<clang::SourceRange> &ifElseSourceRange)
 {
 
     int choice{-1};
@@ -158,14 +158,15 @@ void Transformer::analyzeIfElse(std::vector<clang::Stmt *> ifElseBody, clang::Re
         }
         else if (choice == 1)
         {
-            addCommand(std::make_unique<RemoveIfElseBranches>(writer, ifElseBody));
+            addCommand(std::make_unique<RemoveIfElseBranches>(writer, ifElseBody, context, ifElseSourceRange));
         }
-        // else if (choice == 2)
-        // {
-        //     int branchNumber{};
-        //     std::cin >> branchNumber;
-        //     addCommand(std::make_unique<ReplaceIfElseBranch>(writer, ifElseBody, branchNumber));
-        // }
+        else if (choice == 2)
+        {
+            int branchNumber{};
+            llvm::outs() << "Enter branch number: ";
+            std::cin >> branchNumber;
+            addCommand(std::make_unique<ChooseIfElseBranch>(writer, ifElseBody, context, ifElseSourceRange, branchNumber));
+        }
         else
         {
             displayWrongChoiceError();
