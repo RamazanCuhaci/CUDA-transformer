@@ -14,6 +14,7 @@
 #include "Commands/ReplaceSyncThreadWithTile.h"
 #include "Commands/ReplaceSyncWithWarp.h"
 #include "Commands/ChooseIfElseBranch.h"
+#include "Commands/ReplaceDoubleWithFloat.h"
 #include "Commands/TransformCommand.h"
 
 class Transformer
@@ -36,6 +37,7 @@ class Transformer
     void analyzeKernelCall(clang::CUDAKernelCallExpr *callExpr, clang::Rewriter &writer, clang::ASTContext &context);
     void analyzeIfElse(std::vector<clang::Stmt *> &ifElseBody, clang::Rewriter &writer, clang::ASTContext &context,
                        std::queue<clang::SourceRange> &ifElseSourceRange);
+    void analyzeDoubles(clang::TypeLoc typeLoc, clang::Rewriter &writer);
 };
 
 #endif

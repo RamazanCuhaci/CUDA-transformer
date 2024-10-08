@@ -29,6 +29,11 @@ void CUDA_ASTConsumer::HandleTranslationUnit(clang::ASTContext &context)
         transformer.analyzeKernelCall(kernelCall, writer, context); // Ask for kernel call optimizations
     }
 
+    for (clang::TypeLoc doubleTypeLoc : targetExpressions.doubles)
+    {
+        transformer.analyzeDoubles(doubleTypeLoc, writer); // Ask for double optimizations
+    }
+
     for (std::vector<clang::Stmt *> ifElseBody : targetExpressions.ifElseBodies)
     {
     

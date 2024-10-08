@@ -173,3 +173,34 @@ void Transformer::analyzeIfElse(std::vector<clang::Stmt *> &ifElseBody, clang::R
         }
     }
 }
+
+void Transformer::analyzeDoubles(clang::TypeLoc typeLoc, clang::Rewriter &writer)
+{
+
+    int choice{-1};
+
+    // If there is no valid choice ask again
+    while (choice != 0 && choice != 1)
+    {
+
+        llvm::outs() << "Optimization options for double type:\n"
+                     << "0. Do nothing\n"
+                     << "1. Replace with float\n"
+                     << "Enter choice: ";
+        std::cin >> choice;
+
+        if (choice == 0)
+        {
+            return;
+        }
+        else if (choice == 1)
+        {
+            addCommand(std::make_unique<ReplaceDoubleWithFloat>(writer, typeLoc));
+        }
+        else
+        {
+            displayWrongChoiceError();
+        }
+    }
+
+}

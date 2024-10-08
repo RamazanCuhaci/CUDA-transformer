@@ -31,7 +31,7 @@ class CUDA_ASTVisitor : public clang::RecursiveASTVisitor<CUDA_ASTVisitor>
     bool VisitCUDAKernelCallExpr(clang::CUDAKernelCallExpr *kernelCallEexpr);
     bool VisitCallExpr(clang::CallExpr *callExpr);
     bool VisitFunctionDecl(clang::FunctionDecl *funcDecl);
-    bool VisitIfStmt(clang::IfStmt *ifStmt);
+    bool VisitTypeLoc(clang::TypeLoc typeLoc);
     Expressions &targetExpressions;
 };
 

@@ -15,6 +15,7 @@ class Expressions
     std::vector<clang::CUDAKernelCallExpr *> kernelCalls;
     std::vector<std::vector<clang::Stmt *>> ifElseBodies;
     std::queue<clang::SourceRange> ifElseSourceRange;
+    std::vector<clang::TypeLoc> doubles;
   
 };
 
