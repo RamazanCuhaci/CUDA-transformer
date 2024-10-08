@@ -4,6 +4,7 @@
 #include "clang/AST/Expr.h"
 #include "clang/AST/ExprCXX.h"
 #include <vector>
+#include <queue>
 
 class Expressions
 {
@@ -13,6 +14,7 @@ class Expressions
     std::vector<clang::CallExpr *> atomicCalls;
     std::vector<clang::CUDAKernelCallExpr *> kernelCalls;
     std::vector<std::vector<clang::Stmt *>> ifElseBodies;
+    std::queue<clang::SourceRange> ifElseSourceRange;
   
 };
 
