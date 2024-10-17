@@ -27,9 +27,10 @@ void CUDA_ASTConsumer::applyOptimizationsChoices(clang::ASTContext &context)
     /// IMPORTANT : When If Else body has other optimization possibilities
     /// TODO : Implement a better way to handle this
 
+   
     for (clang::CallExpr *syncCall : targetExpressions.syncthreadCalls)
     {
-        transformer.analyzeSyncthread(syncCall, writer, context); 
+        transformer.analyzeSyncthread(syncCall, writer, context);
     }
 
     for (clang::CallExpr *atomicCall : targetExpressions.atomicCalls)
@@ -45,14 +46,7 @@ void CUDA_ASTConsumer::applyOptimizationsChoices(clang::ASTContext &context)
     for (clang::CUDAKernelCallExpr *kernelCall : targetExpressions.kernelCalls)
     {
 
-        transformer.analyzeKernelCall(kernelCall, writer, context); 
-    }
-
-    for (std::vector<clang::Stmt *> ifElseBody : targetExpressions.ifElseBodies)
-    {
-
-        transformer.analyzeIfElse(ifElseBody, writer, context,
-                                  targetExpressions.ifElseSourceRange);
+        transformer.analyzeKernelCall(kernelCall, writer, context);
     }
 
     for (clang::ForStmt *forStmt : targetExpressions.forStmts)
@@ -64,6 +58,14 @@ void CUDA_ASTConsumer::applyOptimizationsChoices(clang::ASTContext &context)
     {
         transformer.analyzeForStmt(kernelLaunchforStmt, writer, context);
     }
+
+     for (std::vector<clang::Stmt *> ifElseBody : targetExpressions.ifElseBodies)
+    {
+
+        transformer.analyzeIfElse(ifElseBody, writer, context, targetExpressions.ifElseSourceRange);
+    }
+
+
 }
 
 void CUDA_ASTConsumer::printOptimizationPossibilities()
@@ -72,10 +74,11 @@ void CUDA_ASTConsumer::printOptimizationPossibilities()
     /// IMPORTANT : ORDER OF PRINTING IS IMPORTANT
 
     std::cout << "Optimization possibilities: \n";
-    
+
+
     for (size_t i = 0; i < targetExpressions.syncthreadCalls.size(); i++)
     {
-        
+
         std::cout << 0;
     }
 
@@ -93,35 +96,36 @@ void CUDA_ASTConsumer::printOptimizationPossibilities()
     {
         std::cout << 3 << 4;
     }
-    
+
+    for (size_t i = 0; i < targetExpressions.kernelLaunchforStmts.size(); i++)
+    {
+        std::cout << 5;
+    }
+
+    for (size_t i = 0; i < targetExpressions.forStmts.size(); i++)
+    {
+        std::cout << 6;
+    }
+
+
     for (std::vector<clang::Stmt *> ifElseBody : targetExpressions.ifElseBodies)
     {
         if (ifElseBody.size() == 1)
         {
-            std::cout << 5;
+            std::cout << 7;
         }
         else if (ifElseBody.size() == 2)
         {
-            std::cout << 6;
+            std::cout << 8;
         }
         else if (ifElseBody.size() == 3)
         {
-            std::cout << 7;
+            std::cout << 9;
         }
         else
         {
             llvm::errs() << "Error: If-Else body size is not supported\n";
         }
-    }
-
-    for (size_t i = 0; i < targetExpressions.kernelLaunchforStmts.size(); i++)
-    {
-        std::cout << 8;
-    }
-
-     for (size_t i = 0; i < targetExpressions.forStmts.size(); i++)
-    {
-        std::cout << 9;
     }
 
     std::cout << "\n";

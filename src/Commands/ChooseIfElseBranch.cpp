@@ -10,18 +10,12 @@ ChooseIfElseBranch::ChooseIfElseBranch(clang::Rewriter &rewriter, std::vector<cl
 
 void ChooseIfElseBranch::execute()
 {
-    // clang::PrintingPolicy policy(context.getLangOpts());
-    // llvm::errs() << ifElseBody.size() << "\n";
-    // for (const auto &stmt : ifElseBody)
-    // {
 
-    //     stmt->printPretty(llvm::errs(), nullptr, policy);
-    //     llvm::errs() << "*********************************************************\n";
-    // }
-
-    clang::StringRef ifElseString =
-        clang::Lexer::getSourceText(clang::CharSourceRange::getTokenRange(ifElseBody[branchNumber-2]->getSourceRange()),
-                                    context.getSourceManager(), context.getLangOpts());
+   
+    std::string ifElseString;
+    llvm::raw_string_ostream rso(ifElseString);
+    ifElseBody[branchNumber-2]->printPretty(rso, nullptr, context.getPrintingPolicy());
+    rso.flush();
 
     // Get the start location of the first if statement
     rewriter.ReplaceText(ifElseSourceRange.front(), ifElseString);
