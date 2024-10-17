@@ -20,7 +20,7 @@ void ChooseIfElseBranch::execute()
     // }
 
     clang::StringRef ifElseString =
-        clang::Lexer::getSourceText(clang::CharSourceRange::getTokenRange(ifElseBody[branchNumber]->getSourceRange()),
+        clang::Lexer::getSourceText(clang::CharSourceRange::getTokenRange(ifElseBody[branchNumber-2]->getSourceRange()),
                                     context.getSourceManager(), context.getLangOpts());
 
     // Get the start location of the first if statement

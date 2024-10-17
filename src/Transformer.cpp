@@ -5,6 +5,20 @@ void Transformer::addCommand(std::unique_ptr<TransformCommand> command)
     commands.push_back(std::move(command));
 }
 
+void Transformer::getOptimizationChoices()
+{
+    std::string choices;
+    std::cin >> choices;
+
+    for (char c : choices)
+    {
+        if (isdigit(c))
+        {
+            int digit = c - '0';
+            choiceQueue.push(digit);
+        }
+    }
+}
 void Transformer::displayWrongChoiceError()
 {
     llvm::outs() << "######################################\n ERROR : Invalid Choice ! Choose again "
@@ -22,80 +36,58 @@ void Transformer::executeCommands()
 void Transformer::analyzeSyncthread(clang::CallExpr *callExpr, clang::Rewriter &rewriter, clang::ASTContext &context)
 {
 
-    int choice{-1};
+    int choice = choiceQueue.front();
+    choiceQueue.pop();
+    std::cout << "SyncThread Choice: " << choice << "\n";
 
-    // If there is no valid choice ask again
-    while (choice != 0 && choice != 1 && choice != 2 && choice != 3 && choice != 4)
+    if (choice == 0)
     {
-        llvm::outs() << "Optimization options for __syncthreads:\n"
-                     << "0. Do nothing\n"
-                     << "1. Replace with __syncwarp()\n"
-                     << "2. Remove __syncthreads\n"
-                     << "3. Synchronize only 4 threads in the group\n"
-                     << "4. Synchronize only active threads"
-                     << "Enter choice: ";
-
-        std::cin >> choice;
-
-        if (choice == 0)
-        {
-            return;
-        }
-        else if (choice == 1)
-        {
-            addCommand(std::make_unique<ReplaceSyncWithWarp>(rewriter, callExpr));
-        }
-        else if (choice == 2)
-        {
-            addCommand(std::make_unique<RemoveSyncThread>(rewriter, callExpr));
-        }
-        else if (choice == 3)
-        {
-            addCommand(std::make_unique<ReplaceSyncThreadWithTile>(rewriter, callExpr, context));
-        }
-        else if (choice == 4)
-        {
-            addCommand(std::make_unique<ReplaceSyncThreadWithActive>(rewriter, callExpr, context));
-        }
-        else
-        {
-            displayWrongChoiceError();
-        }
+        return;
+    }
+    else if (choice == 1)
+    {
+        addCommand(std::make_unique<ReplaceSyncWithWarp>(rewriter, callExpr));
+    }
+    else if (choice == 2)
+    {
+        addCommand(std::make_unique<RemoveSyncThread>(rewriter, callExpr));
+    }
+    else if (choice == 3)
+    {
+        addCommand(std::make_unique<ReplaceSyncThreadWithTile>(rewriter, callExpr, context));
+    }
+    else if (choice == 4)
+    {
+        addCommand(std::make_unique<ReplaceSyncThreadWithActive>(rewriter, callExpr, context));
+    }
+    else
+    {
+        displayWrongChoiceError();
     }
 }
 
 void Transformer::analyzeAtomicCalls(clang::CallExpr *callExpr, clang::Rewriter &rewriter, clang::ASTContext &context)
 {
 
-    int choice{-1};
+    int choice = choiceQueue.front();
+    choiceQueue.pop();
+    std::cout << "Atomic Choice: " << choice << "\n";
 
-    // If there is no valid choice ask again
-    while (choice != 0 && choice != 1 && choice != 2)
+    if (choice == 0)
     {
-
-        llvm::outs() << "Optimization options for atomic function:\n"
-                     << "0. Do nothing\n"
-                     << "1. Replace with atomic block\n"
-                     << "2. Replace with direct operation\n"
-                     << "Enter choice: ";
-        std::cin >> choice;
-
-        if (choice == 0)
-        {
-            return;
-        }
-        else if (choice == 1)
-        {
-            addCommand(std::make_unique<ReplaceAtomicWithBlock>(rewriter, callExpr, context));
-        }
-        else if (choice == 2)
-        {
-            addCommand(std::make_unique<ReplaceAtomicWithDirect>(rewriter, callExpr, context));
-        }
-        else
-        {
-            displayWrongChoiceError();
-        }
+        return;
+    }
+    else if (choice == 1)
+    {
+        addCommand(std::make_unique<ReplaceAtomicWithBlock>(rewriter, callExpr, context));
+    }
+    else if (choice == 2)
+    {
+        addCommand(std::make_unique<ReplaceAtomicWithDirect>(rewriter, callExpr, context));
+    }
+    else
+    {
+        displayWrongChoiceError();
     }
 }
 
@@ -103,104 +95,119 @@ void Transformer::analyzeKernelCall(clang::CUDAKernelCallExpr *callExpr, clang::
                                     clang::ASTContext &context)
 {
 
-    int choice{-1};
+    int blockReductionNumber{};
+    int threadReductionNumber{};
 
-    // If there is no valid choice ask again
-    while (choice != 0 && choice != 1 && choice != 2)
+    int blockChoice = choiceQueue.front();
+    choiceQueue.pop();
+
+    int threadChoice = choiceQueue.front();
+    choiceQueue.pop();
+    std::cout << "Block choice: " << blockChoice << "\n";
+    std::cout << "Thread choice: " << threadChoice << "\n";
+
+    if (blockChoice == 0 || threadChoice == 0)
     {
-
-        llvm::outs() << "Optimization options for kernel call:\n"
-                     << "0. Do nothing\n"
-                     << "1. Block reduction (type '1 deductionRate')"
-                     << "Enter choice: ";
-
-        int blockReductionRate{};
-        int threadReductionRate{};
-        std::cin >> choice >> blockReductionRate >> threadReductionRate;
-
-        if (choice == 0)
-        {
-            return;
-        }
-        else if (choice == 1)
-        {
-            addCommand(std::make_unique<KernelCallReduction>(rewriter, callExpr, context, blockReductionRate,
-                                                             threadReductionRate));
-        }
-        else
-        {
-            displayWrongChoiceError();
-        }
+        return;
     }
+    if (blockChoice == 1)
+    {
+        blockReductionNumber = 1;
+    }
+    else if (blockChoice == 2)
+    {
+        blockReductionNumber = 2;
+    }
+
+    if (threadChoice == 1)
+    {
+        threadReductionNumber = 32;
+    }
+    else if (threadChoice == 2)
+    {
+        threadReductionNumber = 64;
+    }
+
+    addCommand(std::make_unique<KernelCallReduction>(rewriter, callExpr, context, blockReductionNumber,
+                                                     threadReductionNumber));
 }
 
 void Transformer::analyzeIfElse(std::vector<clang::Stmt *> &ifElseBody, clang::Rewriter &writer,
                                 clang::ASTContext &context, std::queue<clang::SourceRange> &ifElseSourceRange)
 {
 
-    int choice{-1};
-
-    // If there is no valid choice ask again
-    while (choice != 0 && choice != 1 && choice != 2)
+    int choice = choiceQueue.front();
+    choiceQueue.pop();
+    std::cout << "If Else Choice: " << choice << "\n";
+    
+    if (choice == 0)
     {
-
-        llvm::outs() << "If else branches found. Branch count: " << ifElseBody.size() << "\n"
-                     << "Optimization options for if-else statement:\n"
-                     << "0. Do nothing\n"
-                     << "1. Delete all\n"
-                     << "2. Replace with choosen branch (type '2 branchNumber')"
-                     << "Enter choice: ";
-        std::cin >> choice;
-
-        if (choice == 0)
-        {
-            return;
-        }
-        else if (choice == 1)
-        {
-            addCommand(std::make_unique<RemoveIfElseBranches>(writer, ifElseBody, context, ifElseSourceRange));
-        }
-        else if (choice == 2)
-        {
-            int branchNumber{};
-            llvm::outs() << "Enter branch number: ";
-            std::cin >> branchNumber;
-            addCommand(std::make_unique<ChooseIfElseBranch>(writer, ifElseBody, context, ifElseSourceRange, branchNumber));
-        }
-        else
-        {
-            displayWrongChoiceError();
-        }
+        return;
     }
+    else if (choice == 1)
+    {
+        addCommand(std::make_unique<RemoveIfElseBranches>(writer, ifElseBody, context, ifElseSourceRange));
+    }
+    else
+    {
+        addCommand(std::make_unique<ChooseIfElseBranch>(writer, ifElseBody, context, ifElseSourceRange, choice));
+    }
+    
 }
 
 void Transformer::analyzeDoubles(clang::TypeLoc typeLoc, clang::Rewriter &writer)
 {
 
-    int choice{-1};
+    int choice = choiceQueue.front();
+    choiceQueue.pop();
+    std::cout << "Doubles Choice: " << choice << std::endl;
 
-    // If there is no valid choice ask again
-    while (choice != 0 && choice != 1)
+    if (choice == 0)
     {
-
-        llvm::outs() << "Optimization options for double type:\n"
-                     << "0. Do nothing\n"
-                     << "1. Replace with float\n"
-                     << "Enter choice: ";
-        std::cin >> choice;
-
-        if (choice == 0)
-        {
-            return;
-        }
-        else if (choice == 1)
-        {
-            addCommand(std::make_unique<ReplaceDoubleWithFloat>(writer, typeLoc));
-        }
-        else
-        {
-            displayWrongChoiceError();
-        }
+        return;
     }
+    else if (choice == 1)
+    {
+        addCommand(std::make_unique<ReplaceDoubleWithFloat>(writer, typeLoc));
+    }
+    else
+    {
+        displayWrongChoiceError();
+    }
+}
 
+void Transformer::analyzeForStmt(clang::ForStmt *forStmt, clang::Rewriter &writer, clang::ASTContext &context)
+{
+    int choice = choiceQueue.front();
+    choiceQueue.pop();
+    std::cout << "For Choice: " << choice << std::endl;
+
+    if (choice == 0)
+    {
+        return;
+    }
+    else if (choice == 1)
+    {
+        float perforationRate = 0.05f;
+        addCommand(std::make_unique<LoopPerforation>(writer, forStmt, context, 1-perforationRate));
+    }
+    else if (choice == 2)
+    {
+        float perforationRate = 0.1f;
+        addCommand(std::make_unique<LoopPerforation>(writer, forStmt, context, 1-perforationRate));
+    }
+    else if (choice == 3)
+    {
+        float perforationRate = 0.15f;
+        addCommand(std::make_unique<LoopPerforation>(writer, forStmt, context, 1-perforationRate));
+    }
+    else if(choice == 4)
+    {
+        float perforationRate = 0.2f;
+        addCommand(std::make_unique<LoopPerforation>(writer, forStmt, context, 1-perforationRate));
+    }
+    else
+    {
+        displayWrongChoiceError();
+    }
 }

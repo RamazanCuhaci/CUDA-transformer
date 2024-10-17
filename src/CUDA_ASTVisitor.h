@@ -25,6 +25,8 @@ class CUDA_ASTVisitor : public clang::RecursiveASTVisitor<CUDA_ASTVisitor>
     bool checkNestedIf(clang::Stmt *stmt);
     std::vector<clang::Stmt *> bodies; // Store the bodies of if-else statements
 
+    bool hasKernelLaunch(clang::ForStmt *forStmt);
+
   public:
     explicit CUDA_ASTVisitor(clang::ASTContext *context, clang::Rewriter &writer, Expressions &targetExpressions);
 
@@ -32,6 +34,7 @@ class CUDA_ASTVisitor : public clang::RecursiveASTVisitor<CUDA_ASTVisitor>
     bool VisitCallExpr(clang::CallExpr *callExpr);
     bool VisitFunctionDecl(clang::FunctionDecl *funcDecl);
     bool VisitTypeLoc(clang::TypeLoc typeLoc);
+    bool VisitForStmt(clang::ForStmt *forStmt);
     Expressions &targetExpressions;
 };
 

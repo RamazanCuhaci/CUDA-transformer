@@ -16,6 +16,9 @@ class Expressions
     std::vector<std::vector<clang::Stmt *>> ifElseBodies;
     std::queue<clang::SourceRange> ifElseSourceRange;
     std::vector<clang::TypeLoc> doubles;
+    std::vector<clang::ForStmt *> forStmts;
+    std::vector<clang::ForStmt *> kernelLaunchforStmts;
+
   
 };
 

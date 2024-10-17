@@ -5,6 +5,45 @@ CUDA_ASTVisitor::CUDA_ASTVisitor(clang::ASTContext *context, clang::Rewriter &wr
       targetExpressions(targetExpressions)
 {
 }
+bool CUDA_ASTVisitor::hasKernelLaunch(clang::ForStmt *forStmt)
+{
+    if (!forStmt) // Check if forStmt is null
+    {
+        return false;
+    }
+
+    // Traverse the body of the loop to check if it contains a CUDA kernel launch
+    for (const clang::Stmt *S : forStmt->getBody()->children())
+    {
+        if (!S) // Skip if statement is null
+        {
+            continue;
+        }
+
+        // Recursively check the statement and its sub-statements for kernel calls
+        if (const clang::CUDAKernelCallExpr *kernelCall = llvm::dyn_cast<clang::CUDAKernelCallExpr>(S))
+        {
+
+            return true; // This loop contains a kernel launch
+        }
+
+        // If the body contains other compound statements or nested loops, we may need to dive deeper
+        for (const clang::Stmt *subStmt : S->children())
+        {
+            if (!subStmt) // Skip null sub-statements
+            {
+                continue;
+            }
+
+            if (llvm::isa<clang::CUDAKernelCallExpr>(subStmt))
+            {
+                return true; // This nested sub-statement contains a kernel launch
+            }
+        }
+    }
+
+    return false; // No kernel launch found in this loop
+}
 
 bool CUDA_ASTVisitor::VisitFunctionDecl(clang::FunctionDecl *funcDecl)
 {
@@ -51,32 +90,19 @@ bool CUDA_ASTVisitor::VisitFunctionDecl(clang::FunctionDecl *funcDecl)
                     currentBranch.push_back(ifStmt->getThen());
                     processedStatements.insert(ifStmt->getThen());
 
-                    clang::Stmt *elseStmt = ifStmt->getElse();
-                    clang::SourceLocation end = elseStmt->getEndLoc();
-
-                    targetExpressions.ifElseSourceRange.push(clang::SourceRange(start, end));
-                    while (elseStmt)
+                    if (clang::Stmt *elseStmt = ifStmt->getElse())
                     {
-                        if (auto *elseIfStmt = llvm::dyn_cast<clang::IfStmt>(elseStmt))
-                        {
-                            currentBranch.push_back(elseIfStmt->getThen());
-                            processedStatements.insert(elseIfStmt->getThen());
-                            elseStmt = elseIfStmt->getElse();
-                            end = elseStmt->getEndLoc();
-                        }
-                        else
-                        {
+                        clang::SourceLocation end = elseStmt->getEndLoc();
 
-                            currentBranch.push_back(elseStmt);
-                            processedStatements.insert(elseStmt);
-
-                            // llvm::errs() << "Last Else Statement Found:\n";
-                            // elseStmt->dump();
-
-                            break;
-                        }
+                        targetExpressions.ifElseSourceRange.push(clang::SourceRange(start, end));
                     }
+                    else
+                    {
+                        clang::SourceLocation end = ifStmt->getEndLoc();
 
+                        targetExpressions.ifElseSourceRange.push(clang::SourceRange(start, end));
+                    }
+                   
                     targetExpressions.ifElseBodies.push_back(currentBranch);
                 }
             }
@@ -111,8 +137,6 @@ bool CUDA_ASTVisitor::checkNestedIf(clang::Stmt *stmt)
 bool CUDA_ASTVisitor::VisitCUDAKernelCallExpr(clang::CUDAKernelCallExpr *kernelCall)
 {
     targetExpressions.kernelCalls.push_back(kernelCall);
-    // static int visitCount = 0;
-    // llvm::errs() << "Visit Count: " << ++visitCount << "\n";
     return true;
 }
 
@@ -147,6 +171,25 @@ bool CUDA_ASTVisitor::VisitTypeLoc(clang::TypeLoc typeLoc)
         if (type->isSpecificBuiltinType(clang::BuiltinType::Double))
         {
             targetExpressions.doubles.push_back(typeLoc);
+        }
+    }
+
+    return true;
+}
+
+bool CUDA_ASTVisitor::VisitForStmt(clang::ForStmt *forStmt)
+{
+
+    if (isVisitorInsideKernel)
+    {
+        targetExpressions.forStmts.push_back(forStmt);
+    }
+    else
+    {
+        // Check if the for loop contains a kernel launch in the host
+        if (hasKernelLaunch(forStmt))
+        {
+            targetExpressions.kernelLaunchforStmts.push_back(forStmt);
         }
     }
 

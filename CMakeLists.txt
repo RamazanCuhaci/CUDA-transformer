@@ -13,6 +13,7 @@ set(LLVM_LINK_COMPONENTS support)
         src/Commands/RemoveIfElseBranches.cpp
         src/Commands/ChooseIfElseBranch.cpp
         src/Commands/ReplaceDoubleWithFloat.cpp
+        src/Commands/LoopPerforation.cpp
         src/Transformer.cpp
     )
     target_link_libraries(CUDA-transformer

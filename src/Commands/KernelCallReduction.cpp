@@ -7,14 +7,14 @@ KernelCallReduction::KernelCallReduction(clang::Rewriter &rewriter, clang::CUDAK
 {
 }
 
-void KernelCallReduction::changeLaunchParameter(const clang::Expr *callArg, bool isDim3)
+void KernelCallReduction::changeLaunchParameter(const clang::Expr *callArg, bool isDim3, int reductionRate)
 {
     std::string newText = clang::Lexer::getSourceText(clang::CharSourceRange::getTokenRange(callArg->getSourceRange()),
                                                       context.getSourceManager(), context.getLangOpts())
                               .str();
     if (isDim3)
     {
-        newText += ".x /= " + std::to_string(blockReductionRate) + ";\t";
+        newText += ".x -= " + std::to_string(reductionRate) + ";\t";
 
         // Add comment that transformer changes
         newText += "\t//////// CUDA-TRANSFORMER WAS HERE : dim3 parameter changed \n\t";
@@ -23,7 +23,7 @@ void KernelCallReduction::changeLaunchParameter(const clang::Expr *callArg, bool
     }
     else
     {
-        newText += " /" + std::to_string(blockReductionRate);
+        newText += " -" + std::to_string(reductionRate);
 
         rewriter.ReplaceText(callArg->getSourceRange(), newText);
 
@@ -46,22 +46,22 @@ void KernelCallReduction::execute()
         if (const clang::CXXConstructExpr *constructExpr = llvm::dyn_cast<clang::CXXConstructExpr>(blockArg))
         {
             // True state that its dim3 parameter so this change is different from other
-            changeLaunchParameter(constructExpr, true);
+            changeLaunchParameter(constructExpr, true, blockReductionRate);
         }
         else
         {
-            changeLaunchParameter(blockArg, false);
+            changeLaunchParameter(blockArg, false, blockReductionRate);
         }
 
         // For the second parameter
         if (const clang::CXXConstructExpr *constructExpr = llvm::dyn_cast<clang::CXXConstructExpr>(threadArg))
         {
             // True state that its dim3 parameter so this change is different from other
-            changeLaunchParameter(constructExpr, true);
+            changeLaunchParameter(constructExpr, true, threadReductionRate);
         }
         else
         {
-            changeLaunchParameter(threadArg, false);
+            changeLaunchParameter(threadArg, false, threadReductionRate);
         }
     }
 }

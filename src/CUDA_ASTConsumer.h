@@ -17,7 +17,9 @@ class CUDA_ASTConsumer : public clang::ASTConsumer
                               Transformer &transformer);
 
     virtual void HandleTranslationUnit(clang::ASTContext &Context) override;
+    void applyOptimizationsChoices(clang::ASTContext &context); 
     Expressions &targetExpressions;
+    void printOptimizationPossibilities();
 };
 
 #endif

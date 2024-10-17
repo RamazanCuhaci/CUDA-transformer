@@ -9,6 +9,7 @@ class RemoveIfElseBranches : public TransformCommand
     std::vector<clang::Stmt *> ifElseBody;
     clang::ASTContext &context;
     std::queue<clang::SourceRange> &ifElseSourceRange;
+    void printIfElseBody();
 
   public:
     RemoveIfElseBranches(clang::Rewriter &rewriter, std::vector<clang::Stmt *> &ifElseBody, clang::ASTContext &context,

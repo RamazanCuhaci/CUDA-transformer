@@ -12,7 +12,7 @@ class KernelCallReduction : public TransformCommand
     clang::ASTContext &context;
     int blockReductionRate, threadReductionRate;
 
-    void changeLaunchParameter(const clang::Expr *callArg, bool isDim3);
+    void changeLaunchParameter(const clang::Expr *callArg, bool isDim3, int reductionRate);
 
   public:
     KernelCallReduction(clang::Rewriter &rewriter, clang::CUDAKernelCallExpr *kernelCall, clang::ASTContext &context,

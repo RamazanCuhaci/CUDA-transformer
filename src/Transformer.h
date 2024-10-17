@@ -15,6 +15,7 @@
 #include "Commands/ReplaceSyncWithWarp.h"
 #include "Commands/ChooseIfElseBranch.h"
 #include "Commands/ReplaceDoubleWithFloat.h"
+#include "Commands/LoopPerforation.h"
 #include "Commands/TransformCommand.h"
 
 class Transformer
@@ -22,8 +23,10 @@ class Transformer
 
     std::vector<std::unique_ptr<TransformCommand>> commands; // List of commands to execute
 
-    void displayWrongChoiceError();
+    std::string optimizationChoices;
 
+    void displayWrongChoiceError();
+    std::queue<int> choiceQueue;
   public:
     Transformer() = default;
     ~Transformer() = default; // Destructor to clean up commands
@@ -38,6 +41,12 @@ class Transformer
     void analyzeIfElse(std::vector<clang::Stmt *> &ifElseBody, clang::Rewriter &writer, clang::ASTContext &context,
                        std::queue<clang::SourceRange> &ifElseSourceRange);
     void analyzeDoubles(clang::TypeLoc typeLoc, clang::Rewriter &writer);
+    void analyzeForStmt(clang::ForStmt *forStmt, clang::Rewriter &writer, clang::ASTContext &context);
+
+    void getOptimizationChoices();
+
+
+
 };
 
 #endif
