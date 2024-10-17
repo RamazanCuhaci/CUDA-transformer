@@ -148,7 +148,15 @@ void Transformer::analyzeIfElse(std::vector<clang::Stmt *> &ifElseBody, clang::R
     {
         addCommand(std::make_unique<RemoveIfElseBranches>(writer, ifElseBody, context, ifElseSourceRange));
     }
-    else
+    else if (choice == 3)
+    {
+        addCommand(std::make_unique<ChooseIfElseBranch>(writer, ifElseBody, context, ifElseSourceRange, choice));
+    }
+    else if (choice == 2)
+    {
+        addCommand(std::make_unique<ChooseIfElseBranch>(writer, ifElseBody, context, ifElseSourceRange, choice));
+    }
+    else if (choice == 4)
     {
         addCommand(std::make_unique<ChooseIfElseBranch>(writer, ifElseBody, context, ifElseSourceRange, choice));
     }

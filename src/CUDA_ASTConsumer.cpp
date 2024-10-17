@@ -72,8 +72,10 @@ void CUDA_ASTConsumer::printOptimizationPossibilities()
     /// IMPORTANT : ORDER OF PRINTING IS IMPORTANT
 
     std::cout << "Optimization possibilities: \n";
+    
     for (size_t i = 0; i < targetExpressions.syncthreadCalls.size(); i++)
     {
+        
         std::cout << 0;
     }
 
@@ -112,12 +114,12 @@ void CUDA_ASTConsumer::printOptimizationPossibilities()
         }
     }
 
-    for (size_t i = 0; i < targetExpressions.forStmts.size(); i++)
+    for (size_t i = 0; i < targetExpressions.kernelLaunchforStmts.size(); i++)
     {
         std::cout << 8;
     }
 
-    for (size_t i = 0; i < targetExpressions.kernelLaunchforStmts.size(); i++)
+     for (size_t i = 0; i < targetExpressions.forStmts.size(); i++)
     {
         std::cout << 9;
     }

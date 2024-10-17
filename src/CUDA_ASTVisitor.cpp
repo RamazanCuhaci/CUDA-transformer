@@ -90,12 +90,47 @@ bool CUDA_ASTVisitor::VisitFunctionDecl(clang::FunctionDecl *funcDecl)
                     currentBranch.push_back(ifStmt->getThen());
                     processedStatements.insert(ifStmt->getThen());
 
+
+                    // If the if statement has an else branch
                     if (clang::Stmt *elseStmt = ifStmt->getElse())
                     {
-                        clang::SourceLocation end = elseStmt->getEndLoc();
+
+                        clang::SourceLocation end;
+
+                        // Check if the else branch is an if statement (else if)
+                        if (auto *elseIfStmt = llvm::dyn_cast<clang::IfStmt>(elseStmt))
+                        {
+                            currentBranch.push_back(elseIfStmt->getThen());
+                            processedStatements.insert(elseIfStmt->getThen());
+
+                            // Check if the else if statement has an else branch 
+                            if (auto *elseStmt = elseIfStmt->getElse())
+                            {
+                                currentBranch.push_back(elseStmt);
+                                processedStatements.insert(elseStmt);
+                                end = elseStmt->getEndLoc();
+                            }
+                            else
+                            {
+                                end = elseIfStmt->getEndLoc();
+                            }
+
+                        
+                        }
+                        // If the else branch is not an if statement - pure else
+                        else
+                        {
+                            currentBranch.push_back(elseStmt);
+                            processedStatements.insert(elseStmt);
+                            clang::SourceLocation end = elseStmt->getEndLoc();
+
+                        }
+                        
 
                         targetExpressions.ifElseSourceRange.push(clang::SourceRange(start, end));
                     }
+
+                    // If the if statement does not have an else branch - only one if branch
                     else
                     {
                         clang::SourceLocation end = ifStmt->getEndLoc();
@@ -103,6 +138,7 @@ bool CUDA_ASTVisitor::VisitFunctionDecl(clang::FunctionDecl *funcDecl)
                         targetExpressions.ifElseSourceRange.push(clang::SourceRange(start, end));
                     }
                    
+                    // Store the if-else body
                     targetExpressions.ifElseBodies.push_back(currentBranch);
                 }
             }
