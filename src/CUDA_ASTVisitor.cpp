@@ -122,7 +122,7 @@ bool CUDA_ASTVisitor::VisitFunctionDecl(clang::FunctionDecl *funcDecl)
                         {
                             currentBranch.push_back(elseStmt);
                             processedStatements.insert(elseStmt);
-                            clang::SourceLocation end = elseStmt->getEndLoc();
+                            end = elseStmt->getEndLoc();
 
                         }
                         

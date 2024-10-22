@@ -33,7 +33,7 @@ void Transformer::executeCommands()
     }
 }
 
-void Transformer::analyzeSyncthread(clang::CallExpr *callExpr, clang::Rewriter &rewriter, clang::ASTContext &context)
+void Transformer::analyzeSyncthread(clang::CallExpr *callExpr, clang::Rewriter &rewriter, clang::ASTContext &context, clang::FileID mainFileID)
 {
 
     int choice = choiceQueue.front();
@@ -46,7 +46,7 @@ void Transformer::analyzeSyncthread(clang::CallExpr *callExpr, clang::Rewriter &
     }
     else if (choice == 1)
     {
-        addCommand(std::make_unique<ReplaceSyncWithWarp>(rewriter, callExpr));
+        addCommand(std::make_unique<ReplaceSyncWithWarp>(rewriter, callExpr, mainFileID));
     }
     else if (choice == 2)
     {

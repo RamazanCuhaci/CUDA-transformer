@@ -23,7 +23,7 @@ class CUDA_FrontendAction : public clang::ASTFrontendAction
     {
         TheRewriter.setSourceMgr(Compiler.getSourceManager(), Compiler.getLangOpts());
         return std::make_unique<CUDA_ASTConsumer>(&Compiler.getASTContext(), TheRewriter, targetExpressions,
-                                                  transformer);
+                                                  transformer, Compiler.getSourceManager().getMainFileID());
     }
 
     void EndSourceFileAction() override

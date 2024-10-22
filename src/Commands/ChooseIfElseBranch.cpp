@@ -11,11 +11,8 @@ ChooseIfElseBranch::ChooseIfElseBranch(clang::Rewriter &rewriter, std::vector<cl
 void ChooseIfElseBranch::execute()
 {
 
-   
-    std::string ifElseString;
-    llvm::raw_string_ostream rso(ifElseString);
-    ifElseBody[branchNumber-2]->printPretty(rso, nullptr, context.getPrintingPolicy());
-    rso.flush();
+
+    std::string ifElseString = rewriter.getRewrittenText( ifElseBody[branchNumber-2]->getSourceRange()); 
 
     // Get the start location of the first if statement
     rewriter.ReplaceText(ifElseSourceRange.front(), ifElseString);

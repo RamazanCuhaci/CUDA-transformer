@@ -31,20 +31,19 @@
 	2- Loop perforation %10
 	3- Loop perforation %15
 	4- Loop perforation %20
-
 7- One branch if
 	0 - Do Nothing
-	1 - Choose branch body
-	2 - Delete branch body
+	1 - Delete body
+	2 - Choose branch body
 8- Two Branch If
 	0 - Do Nothing
-	1 - Choose branch one body
-	2 - Choose branch two body
-	3 - Delete all body
+	1 - Delete all body
+	2 - Choose branch one body
+	3 - Choose branch two body
 9- Three Branch If
 	0 - Do Nothing
 	1 - Delete all body
-	2 - Choose branch one body4
+	2 - Choose branch one body
 	3 - Choose branch two body
 	4 - Choose branch three body
 

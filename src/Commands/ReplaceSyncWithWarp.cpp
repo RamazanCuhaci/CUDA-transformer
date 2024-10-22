@@ -1,7 +1,7 @@
 #include "ReplaceSyncWithWarp.h"
 
-ReplaceSyncWithWarp::ReplaceSyncWithWarp(clang::Rewriter &rewriter, clang::CallExpr *syncCall)
-    : rewriter(rewriter), syncCall(syncCall)
+ReplaceSyncWithWarp::ReplaceSyncWithWarp(clang::Rewriter &rewriter, clang::CallExpr *syncCall, clang::FileID mainFileID)
+    : rewriter(rewriter), syncCall(syncCall), mainFileID(mainFileID)
 {
 }
 

@@ -35,7 +35,7 @@ class Transformer
 
     /* Analyze and ask user to choice for optimization
      */
-    void analyzeSyncthread(clang::CallExpr *callExpr, clang::Rewriter &writer, clang::ASTContext &context);
+    void analyzeSyncthread(clang::CallExpr *callExpr, clang::Rewriter &writer, clang::ASTContext &context, clang::FileID mainFileID);
     void analyzeAtomicCalls(clang::CallExpr *callExpr, clang::Rewriter &writer, clang::ASTContext &context);
     void analyzeKernelCall(clang::CUDAKernelCallExpr *callExpr, clang::Rewriter &writer, clang::ASTContext &context);
     void analyzeIfElse(std::vector<clang::Stmt *> &ifElseBody, clang::Rewriter &writer, clang::ASTContext &context,

@@ -36,6 +36,7 @@ void LoopPerforation::execute()
     }
 
     rewriter.InsertTextBefore(forStmt->getInc()->getBeginLoc().getLocWithOffset(-2), appendedString);
-    
+ 
+
     rewriter.InsertTextBefore(forStmt->getBeginLoc(), "//////// CUDA-TRANSFORMER WAS HERE : Loop Perforation\n");
 }

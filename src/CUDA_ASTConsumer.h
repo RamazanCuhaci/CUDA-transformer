@@ -11,10 +11,11 @@ class CUDA_ASTConsumer : public clang::ASTConsumer
     CUDA_ASTVisitor analysisVisitor;
     clang::Rewriter &writer;
     Transformer &transformer;
-
+    clang::FileID mainFileID;
+    
   public:
     explicit CUDA_ASTConsumer(clang::ASTContext *context, clang::Rewriter &writer, Expressions &targetExpressions,
-                              Transformer &transformer);
+                              Transformer &transformer, clang::FileID mainFileID);
 
     virtual void HandleTranslationUnit(clang::ASTContext &Context) override;
     void applyOptimizationsChoices(clang::ASTContext &context); 
