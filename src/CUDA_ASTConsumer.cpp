@@ -1,9 +1,9 @@
 #include "CUDA_ASTConsumer.h"
 
 CUDA_ASTConsumer::CUDA_ASTConsumer(clang::ASTContext *context, clang::Rewriter &writer, Expressions &targetExpressions,
-                                   Transformer &transformer, clang::FileID mainFileID)
+                                   Transformer &transformer, bool analyzerMode, std::string optimizationChoices)
     : analysisVisitor(context, writer, targetExpressions), writer(writer), transformer(transformer),
-      targetExpressions(targetExpressions) , mainFileID(mainFileID)
+      targetExpressions(targetExpressions), analyzerMode(analyzerMode), optimizationChoices(optimizationChoices)
 {
 }
 
@@ -13,8 +13,15 @@ void CUDA_ASTConsumer::HandleTranslationUnit(clang::ASTContext &context)
     analysisVisitor.TraverseDecl(context.getTranslationUnitDecl());
 
     // Print optimization possibilities
-    printOptimizationPossibilities();
-    transformer.getOptimizationChoices();
+    
+    if (analyzerMode)
+    {
+        printOptimizationPossibilities();
+        exit(0);
+        
+    }
+    
+    transformer.getOptimizationChoices(optimizationChoices);
     applyOptimizationsChoices(context);
 
     transformer.executeCommands();
@@ -23,9 +30,6 @@ void CUDA_ASTConsumer::HandleTranslationUnit(clang::ASTContext &context)
 void CUDA_ASTConsumer::applyOptimizationsChoices(clang::ASTContext &context)
 {
     /// IMPORTANT : ORDER OF APPLYING IS IMPORTANT  (MUST BE SAME AS PRINTING)
-
-    /// IMPORTANT : When If Else body has other optimization possibilities
-    /// TODO : Implement a better way to handle this
 
    
     for (clang::CallExpr *syncCall : targetExpressions.syncthreadCalls)
@@ -72,10 +76,6 @@ void CUDA_ASTConsumer::printOptimizationPossibilities()
 {
 
     /// IMPORTANT : ORDER OF PRINTING IS IMPORTANT
-
-    std::cout << "Optimization possibilities: \n";
-
-
     for (size_t i = 0; i < targetExpressions.syncthreadCalls.size(); i++)
     {
 
@@ -127,6 +127,5 @@ void CUDA_ASTConsumer::printOptimizationPossibilities()
             llvm::errs() << "Error: If-Else body size is not supported\n";
         }
     }
-
     std::cout << "\n";
 }

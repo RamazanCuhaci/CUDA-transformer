@@ -43,7 +43,7 @@ class Transformer
     void analyzeDoubles(clang::TypeLoc typeLoc, clang::Rewriter &writer);
     void analyzeForStmt(clang::ForStmt *forStmt, clang::Rewriter &writer, clang::ASTContext &context);
 
-    void getOptimizationChoices();
+    void getOptimizationChoices(std::string &choices);
 
 
 

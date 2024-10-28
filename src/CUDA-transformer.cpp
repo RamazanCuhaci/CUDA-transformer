@@ -9,6 +9,11 @@
 // Declare tool options
 static llvm::cl::OptionCategory MyToolCategory("my-tool options");
 
+llvm::cl::opt<std::string> OutputFilename("o", llvm::cl::desc("Specify output filename"), llvm::cl::value_desc("filename"));
+
+llvm::cl::opt<bool> AnalyzerMode("analyze", llvm::cl::desc("Analyze the code and print optimization possibilities"));
+llvm::cl::opt<std::string> OptChoices("choices", llvm::cl::desc("Apply the optimizations"));
+
 class CUDA_FrontendAction : public clang::ASTFrontendAction
 {
 
@@ -23,7 +28,7 @@ class CUDA_FrontendAction : public clang::ASTFrontendAction
     {
         TheRewriter.setSourceMgr(Compiler.getSourceManager(), Compiler.getLangOpts());
         return std::make_unique<CUDA_ASTConsumer>(&Compiler.getASTContext(), TheRewriter, targetExpressions,
-                                                  transformer, Compiler.getSourceManager().getMainFileID());
+                                                  transformer, AnalyzerMode, OptChoices);
     }
 
     void EndSourceFileAction() override
@@ -33,7 +38,7 @@ class CUDA_FrontendAction : public clang::ASTFrontendAction
         clang::FileID mainFileID = SM.getMainFileID();
 
         // Create the new filename with "new_" prefix
-        std::string newFileName = "new_cuda.cu";
+        std::string newFileName = OutputFilename;
 
         // Open a file stream for the new file
         std::error_code EC;

@@ -12,10 +12,12 @@ class CUDA_ASTConsumer : public clang::ASTConsumer
     clang::Rewriter &writer;
     Transformer &transformer;
     clang::FileID mainFileID;
+    bool analyzerMode;
+    std::string optimizationChoices;
     
   public:
     explicit CUDA_ASTConsumer(clang::ASTContext *context, clang::Rewriter &writer, Expressions &targetExpressions,
-                              Transformer &transformer, clang::FileID mainFileID);
+                              Transformer &transformer, bool analyzerMode, std::string &optimizationChoices);
 
     virtual void HandleTranslationUnit(clang::ASTContext &Context) override;
     void applyOptimizationsChoices(clang::ASTContext &context); 

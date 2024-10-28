@@ -5,10 +5,8 @@ void Transformer::addCommand(std::unique_ptr<TransformCommand> command)
     commands.push_back(std::move(command));
 }
 
-void Transformer::getOptimizationChoices()
+void Transformer::getOptimizationChoices(std::string& choices)
 {
-    std::string choices;
-    std::cin >> choices;
 
     for (char c : choices)
     {
@@ -38,7 +36,6 @@ void Transformer::analyzeSyncthread(clang::CallExpr *callExpr, clang::Rewriter &
 
     int choice = choiceQueue.front();
     choiceQueue.pop();
-    std::cout << "SyncThread Choice: " << choice << "\n";
 
     if (choice == 0)
     {
@@ -71,7 +68,6 @@ void Transformer::analyzeAtomicCalls(clang::CallExpr *callExpr, clang::Rewriter 
 
     int choice = choiceQueue.front();
     choiceQueue.pop();
-    std::cout << "Atomic Choice: " << choice << "\n";
 
     if (choice == 0)
     {
@@ -103,10 +99,8 @@ void Transformer::analyzeKernelCall(clang::CUDAKernelCallExpr *callExpr, clang::
 
     int threadChoice = choiceQueue.front();
     choiceQueue.pop();
-    std::cout << "Block choice: " << blockChoice << "\n";
-    std::cout << "Thread choice: " << threadChoice << "\n";
 
-    if (blockChoice == 0 || threadChoice == 0)
+    if (blockChoice == 0  && threadChoice == 0)
     {
         return;
     }
@@ -138,7 +132,6 @@ void Transformer::analyzeIfElse(std::vector<clang::Stmt *> &ifElseBody, clang::R
 
     int choice = choiceQueue.front();
     choiceQueue.pop();
-    std::cout << "If Else Choice: " << choice << "\n";
     
     if (choice == 0)
     {
@@ -168,7 +161,6 @@ void Transformer::analyzeDoubles(clang::TypeLoc typeLoc, clang::Rewriter &writer
 
     int choice = choiceQueue.front();
     choiceQueue.pop();
-    std::cout << "Doubles Choice: " << choice << std::endl;
 
     if (choice == 0)
     {
@@ -188,7 +180,6 @@ void Transformer::analyzeForStmt(clang::ForStmt *forStmt, clang::Rewriter &write
 {
     int choice = choiceQueue.front();
     choiceQueue.pop();
-    std::cout << "For Choice: " << choice << std::endl;
 
     if (choice == 0)
     {
