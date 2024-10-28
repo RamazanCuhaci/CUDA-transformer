@@ -110,10 +110,8 @@ int main(int argc, char *argv[])
 
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 
-    std::cout << "Optimization types: " << output << std::endl;
+    std::cout << "\nOptimization types: " << output << std::endl;
     std::cout << "Time taken = " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << "[ms]" << std::endl;
-    std::cout << "Number of files generated: ";
-    std::system("cd results && ls -l | grep -v '^d' | wc -l");
 
 
     return 0;
