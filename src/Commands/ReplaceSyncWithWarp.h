@@ -8,10 +8,9 @@ class ReplaceSyncWithWarp : public TransformCommand
 {
     clang::Rewriter &rewriter;
     clang::CallExpr *syncCall;
-    clang::FileID mainFileID;
 
   public:
-    ReplaceSyncWithWarp(clang::Rewriter &rewriter, clang::CallExpr *syncCall, clang::FileID mainFileID);
+    ReplaceSyncWithWarp(clang::Rewriter &rewriter, clang::CallExpr *syncCall);
 
     void execute() override;
 };

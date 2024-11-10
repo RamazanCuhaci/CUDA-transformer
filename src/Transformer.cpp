@@ -31,7 +31,7 @@ void Transformer::executeCommands()
     }
 }
 
-void Transformer::analyzeSyncthread(clang::CallExpr *callExpr, clang::Rewriter &rewriter, clang::ASTContext &context, clang::FileID mainFileID)
+void Transformer::analyzeSyncthread(clang::CallExpr *callExpr, clang::Rewriter &rewriter, clang::ASTContext &context)
 {
 
     int choice = choiceQueue.front();
@@ -43,7 +43,7 @@ void Transformer::analyzeSyncthread(clang::CallExpr *callExpr, clang::Rewriter &
     }
     else if (choice == 1)
     {
-        addCommand(std::make_unique<ReplaceSyncWithWarp>(rewriter, callExpr, mainFileID));
+        addCommand(std::make_unique<ReplaceSyncWithWarp>(rewriter, callExpr));
     }
     else if (choice == 2)
     {
@@ -135,23 +135,30 @@ void Transformer::analyzeIfElse(std::vector<clang::Stmt *> &ifElseBody, clang::R
     
     if (choice == 0)
     {
+        // llvm::outs() << "Removing Source Range: " << ifElseSourceRange.front().printToString(context.getSourceManager()) << "\n";
+        ifElseSourceRange.pop();
         return;
     }
     else if (choice == 1)
-    {
-        addCommand(std::make_unique<RemoveIfElseBranches>(writer, ifElseBody, context, ifElseSourceRange));
+    {   
+
+        addCommand(std::make_unique<RemoveIfElseBranches>(writer, ifElseBody, context, ifElseSourceRange.front()));
+        ifElseSourceRange.pop();
     }
     else if (choice == 3)
     {
-        addCommand(std::make_unique<ChooseIfElseBranch>(writer, ifElseBody, context, ifElseSourceRange, choice));
+        addCommand(std::make_unique<ChooseIfElseBranch>(writer, ifElseBody, context, ifElseSourceRange.front(), choice));
+        ifElseSourceRange.pop();
     }
     else if (choice == 2)
     {
-        addCommand(std::make_unique<ChooseIfElseBranch>(writer, ifElseBody, context, ifElseSourceRange, choice));
+        addCommand(std::make_unique<ChooseIfElseBranch>(writer, ifElseBody, context, ifElseSourceRange.front(), choice));
+        ifElseSourceRange.pop();
     }
     else if (choice == 4)
     {
-        addCommand(std::make_unique<ChooseIfElseBranch>(writer, ifElseBody, context, ifElseSourceRange, choice));
+        addCommand(std::make_unique<ChooseIfElseBranch>(writer, ifElseBody, context, ifElseSourceRange.front(), choice));
+        ifElseSourceRange.pop();
     }
     
 }

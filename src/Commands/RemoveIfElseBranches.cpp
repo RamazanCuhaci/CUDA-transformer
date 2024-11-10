@@ -2,7 +2,7 @@
 
 RemoveIfElseBranches::RemoveIfElseBranches(clang::Rewriter &rewriter, std::vector<clang::Stmt *> &ifElseBody,
                                            clang::ASTContext &context,
-                                           std::queue<clang::SourceRange> &ifElseSourceRange)
+                                           clang::SourceRange ifElseSourceRange)
     : rewriter(rewriter), ifElseBody(ifElseBody), context(context), ifElseSourceRange(ifElseSourceRange)
 {
 }
@@ -22,11 +22,9 @@ void RemoveIfElseBranches::execute()
 {
 
     // Get the start location of the first if statement
-    rewriter.RemoveText(ifElseSourceRange.front());
+    rewriter.RemoveText(ifElseSourceRange);
 
-    rewriter.InsertTextBefore(ifElseSourceRange.front().getBegin(),
+    rewriter.InsertTextBefore(ifElseSourceRange.getBegin(),
                               "//////// CUDA-TRANSFORMER WAS HERE : If-Else Branches Removed\n");
 
-    // Remove the source range from the queue
-    ifElseSourceRange.pop();
 }

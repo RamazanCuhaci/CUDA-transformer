@@ -7,12 +7,12 @@ class ChooseIfElseBranch : public TransformCommand
     clang::Rewriter &rewriter;
     std::vector<clang::Stmt *> ifElseBody;
     clang::ASTContext &context;
-    std::queue<clang::SourceRange> &ifElseSourceRange;
+    clang::SourceRange ifElseSourceRange;
     int branchNumber;
 
   public:
     ChooseIfElseBranch(clang::Rewriter &rewriter, std::vector<clang::Stmt *> &ifElseBody, clang::ASTContext &context,
-                       std::queue<clang::SourceRange> &ifElseSourceRange, int branchNumber);
+                       clang::SourceRange ifElseSourceRange, int branchNumber);
 
     void execute() override;
 };

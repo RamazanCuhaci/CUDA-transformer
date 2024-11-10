@@ -1,7 +1,7 @@
 #include "CUDA_ASTConsumer.h"
 
 CUDA_ASTConsumer::CUDA_ASTConsumer(clang::ASTContext *context, clang::Rewriter &writer, Expressions &targetExpressions,
-                                   Transformer &transformer, bool analyzerMode, std::string optimizationChoices)
+                                   Transformer &transformer, bool analyzerMode, std::string &optimizationChoices)
     : analysisVisitor(context, writer, targetExpressions), writer(writer), transformer(transformer),
       targetExpressions(targetExpressions), analyzerMode(analyzerMode), optimizationChoices(optimizationChoices)
 {
@@ -34,7 +34,7 @@ void CUDA_ASTConsumer::applyOptimizationsChoices(clang::ASTContext &context)
    
     for (clang::CallExpr *syncCall : targetExpressions.syncthreadCalls)
     {
-        transformer.analyzeSyncthread(syncCall, writer, context, mainFileID);
+        transformer.analyzeSyncthread(syncCall, writer, context);
     }
 
     for (clang::CallExpr *atomicCall : targetExpressions.atomicCalls)

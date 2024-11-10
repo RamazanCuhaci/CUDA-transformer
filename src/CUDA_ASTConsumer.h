@@ -11,7 +11,6 @@ class CUDA_ASTConsumer : public clang::ASTConsumer
     CUDA_ASTVisitor analysisVisitor;
     clang::Rewriter &writer;
     Transformer &transformer;
-    clang::FileID mainFileID;
     bool analyzerMode;
     std::string optimizationChoices;
     
