@@ -25,5 +25,4 @@ This tool is used to modify and transform CUDA source codes. This README file pr
 
 ## Samples
 
-Samples created for [PolyBench-ACC](https://github.com/cavazos-lab/PolyBench-ACC) benchmark programs. Samples link (https://drive.google.com/drive/folders/1aiotg3w3qJnpWaZLr2So1B73umVrQbQR?usp=sharing)
-))
+Samples created for [PolyBench-ACC](https://github.com/cavazos-lab/PolyBench-ACC) benchmark programs. Samples link [https://drive.google.com/drive/folders/1aiotg3w3qJnpWaZLr2So1B73umVrQbQR](https://drive.google.com/drive/folders/1aiotg3w3qJnpWaZLr2So1B73umVrQbQR?usp=sharing)
