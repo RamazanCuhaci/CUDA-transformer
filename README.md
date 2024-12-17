@@ -21,4 +21,9 @@ This tool is used to modify and transform CUDA source codes. This README file pr
 6. Finally, navigate to the build directory of the LLVM project and compile the tool by running the following commands. "-j 16 " for building with 16 core. :
     ```bash
     sudo make -j 16 install CUDAIntegratedTransformerTool
-    ```  
+    ```
+
+## Samples
+
+Samples created for [PolyBench-ACC](https://github.com/cavazos-lab/PolyBench-ACC) benchmark programs. Samples link [https://github.com/cavazos-lab/PolyBench-ACC](https://drive.google.com/drive/folders/1aiotg3w3qJnpWaZLr2So1B73umVrQbQR?usp=sharing
+))
